@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %} Search Results for {{ query }}{% endblock %}
+
+{% block content %}
+    <h1 align="center">Search Results for "{{ query }}"</h1>
+
+    {% if search_results %}
+        <div id="posts">
+            {% for post in search_results %}
+                <div class="card border-dark">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Posted By: <a href="/posts/{{post.user.username}}">{{post.user.username}}</a></span>                  
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-title">
+                            <h3><a href="{{ url_for('views.single_post', post_id=post.id) }}"  style="color: black;">{{ post.title }}</a></h3>
+                        </div>
+                        <div class="card-text">
+                            {{ post.text }}
+                        </div>
+                        <br/>
+                    </div>
+
+                    <div class="card-footer text-muted">
+                        {{ post.date_created.strftime('%m/%d/%Y') }}
+                    </div>
+                </div>
+                <br />
+            {% endfor %}
+        </div>
+    {% else %}
+        <p align="center">No results found for "{{ query }}"</p>
+    {% endif %}
+{% endblock %}

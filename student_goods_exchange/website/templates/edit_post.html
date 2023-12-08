@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block content %}
+    <h1 align="center">Edit Post</h1>
+
+    <form method="POST" action="/edit-post/{{ post.id }}" enctype="multipart/form-data">
+
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" id="title" name="title" class="form-control" value="{{ post.title }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="text" class="form-label">Text</label>
+            <textarea id="text" name="text" class="form-control" required>{{ post.text }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="photo" class="form-label">Photo</label>
+            <input type="file" id="photo" name="photo" class="form-control">
+        </div>
+
+        <div align="center">
+            <button type="submit" class="btn btn-lg btn-primary">Save Changes</button>
+        </div>
+    </form>
+
+    <br />
+
+    <div align="center">
+        <a href="/home"><button type="button" class="btn btn-lg btn-secondary">Cancel</button></a>
+    </div>
+{% endblock %}

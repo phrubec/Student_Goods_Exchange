@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="card border-dark"> 
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Posted By: <a href="/posts/{{post.user.username}}">{{post.user.username}}</a></span>
+                <div>
+                    {{ post.likes|length }}
+                    {% if user.id in post.likes|map(attribute="author")|list %}
+                    <a href="/like-post/{{post.id}}"><i class="fa-solid fa-thumbs-up"></i></a>
+                    {% else %}
+                    <a href="/like-post/{{post.id}}"><i class="fa-regular fa-thumbs-up"></i></a>
+                    {% endif %}
+                    {% if user.id == post.author %}
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown"></button>
+                        <ul class="dropdown-menu">
+                                <li> <a href="/delete-post/{{post.id}}" class="dropdown-item">Delete</a> </li>
+                                <li><a href="/edit-post/{{post.id}}" class="dropdown-item">Edit</a></li>
+                        </ul>
+                    </div> 
+                    {% endif %}  
+                </div>
+                
+            </div>
+
+            <div class="card-body">
+                <div class="card-title">
+                    <h3><a href="{{ url_for('views.single_post', post_id=post.id) }}" style="color: black;">{{ post.title }}</a></h3>
+                </div>
+                <div class="card-text">
+                    {{ post.text }}
+                </div>
+
+                {% if post.image %}
+                    <img src="{{ url_for('static', filename='uploads/photos/' + post.image) }}" class="rounded mx-auto d-block" alt="Post Image">
+                {% endif %}
+                <br/>
+
+                <div class="collapse" id="comments-{{post.id}}">
+                    <div class="card">
+                        <div class="card-body" id="comments-expanded-{{post.id}}">
+                            {%for comment in post.comments%}
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <a href="/posts/{{comment.user.username}}">{{comment.user.username}}</a>: {{comment.text}}
+                                    </div>
+
+                                    <div>
+                                        <small class="text-muted">{{comment.date_created.strftime('%m/%d/%Y')}}</small>
+
+                                        {% if user.id == comment.author or user.id == post.author%}
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown"></button>
+                                                <ul class="dropdown-menu">
+                                                    <li> <a href="/delete-comment/{{comment.id}}" class="dropdown-item">Delete</a> </li>
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>  
+                            {%endfor%}
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="card-text">
+                    {% if post.comments|length > 0 %}
+                    <a data-bs-toggle="collapse" href="#comments-{{post.id}}" role="button">
+                        <small>View {{post.comments|length}} Comments</small>
+                    </a>
+                    {% else %}
+                    <small class="text-muted">0 comments</small>
+                    {% endif %}
+                </p>
+
+                <form class="input-group mb-3" method='POST' action="/create-comment/{{post.id}}">
+                    <input 
+                        type="text" 
+                        id="text" 
+                        name="text" 
+                        class="form-control" 
+                        placeholder="Add a comment"
+                    /> 
+                    <button type="submit" class="btn btn-primary">Comment</button>
+                </form>
+            </div>
+
+            <div class="card-footer text-muted">
+                {{ post.date_created.strftime('%m/%d/%Y') }}
+            </div>
+        </div>
+{% endblock %}
